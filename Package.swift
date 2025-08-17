@@ -4,11 +4,20 @@
 import PackageDescription
 
 let package = Package(
-    name: "SwissPomodoro",
-    targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .executableTarget(
-            name: "SwissPomodoro"),
-    ]
+  name: "SwissPomodoro",
+  platforms: [
+    .macOS(.v14)
+  ],
+  targets: [
+    .executableTarget(
+      name: "SwissPomodoro",
+      swiftSettings: [
+        .enableExperimentalFeature("StrictConcurrency")
+      ]
+    ),
+    .testTarget(
+      name: "SwissPomodoroTests",
+      dependencies: ["SwissPomodoro"]
+    ),
+  ]
 )

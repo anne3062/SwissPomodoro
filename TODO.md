@@ -3,7 +3,7 @@
 ## SwissPomodoro SwiftUI App (macOS 14+)
 
 ### Initial Tasks
-- [ ] Set up SwiftUI project structure
+- [x] Set up SwiftUI project structure
 - [ ] Create main Pomodoro timer view
 - [ ] Add basic timer functionality (start, pause, reset)
 - [ ] Design minimal UI for macOS 14+
