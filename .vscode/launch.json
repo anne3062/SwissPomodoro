@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:SwissPomodoro}",
+      "name": "Debug SwissPomodoro",
+      "program": "${workspaceFolder:SwissPomodoro}/.build/debug/SwissPomodoro",
+      "preLaunchTask": "swift: Build Debug SwissPomodoro"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:SwissPomodoro}",
+      "name": "Release SwissPomodoro",
+      "program": "${workspaceFolder:SwissPomodoro}/.build/release/SwissPomodoro",
+      "preLaunchTask": "swift: Build Release SwissPomodoro"
+    }
+  ]
+}
