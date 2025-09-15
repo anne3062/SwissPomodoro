@@ -35,12 +35,12 @@ struct ContentView: View {
       .onHover { hovering in
         showDigitalTimer = hovering
       }
-  var minuteHandAngle: Double {
-    // Start from top (12 o'clock) and move counterclockwise
-    let totalMinutes = Double(totalTime) / 60.0
-    let minutesElapsed = Double(totalTime - timeRemaining) / 60.0
-    return 0.0 - (minutesElapsed / totalMinutes) * 360.0
-  }
+      var minuteHandAngle: Double {
+        // Start from top (12 o'clock) and move counterclockwise
+        let totalMinutes = Double(totalTime) / 60.0
+        let minutesElapsed = Double(totalTime - timeRemaining) / 60.0
+        return 0.0 - (minutesElapsed / totalMinutes) * 360.0
+      }
       HStack(spacing: 20) {
         Button(action: startTimer) {
           Text("Start")
