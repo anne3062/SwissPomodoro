@@ -1,11 +1,9 @@
-import Testing
+import XCTest
 
 @testable import SwissPomodoro
 
-@Suite("SwissPomodoro Tests")
-struct SwissPomodoroTests {
-  @Test("Basic test example")
-  func testExample() {
-    #expect(Bool(true))
+final class SwissPomodoroTests: XCTestCase {
+  func testExample() throws {
+    XCTAssertTrue(true)
   }
 }

@@ -5,6 +5,9 @@ struct ContentView: View {
   @State private var timerActive: Bool = false
   @State private var timer: Timer? = nil
   @State private var showDigitalTimer: Bool = false
+  @State private var showDurationSheet: Bool = false
+  @State private var durationMinutes: Int = 25
+  @State private var totalTimeSeconds: Int = 25 * 60
 
   var body: some View {
     VStack(spacing: 32) {
@@ -12,37 +15,68 @@ struct ContentView: View {
         .font(.largeTitle)
         .padding(.top)
       ZStack {
+        // Outer bold circle
         Circle()
-          .stroke(Color.gray.opacity(0.3), lineWidth: 32)
-          .frame(width: 180, height: 180)
-        // Progress arc
+          .stroke(Color.black, lineWidth: 4)
+          .frame(width: 220, height: 220)
+        // Tick marks and numbers
+        ForEach(0..<60) { i in
+          VStack {
+            if i % 5 == 0 {
+              Rectangle()
+                .fill(Color.black)
+                .frame(width: 2, height: 16)
+            } else {
+              Rectangle()
+                .fill(Color.black)
+                .frame(width: 1, height: 8)
+                .opacity(0.5)
+            }
+            Spacer()
+            if i % 5 == 0 {
+              Text("\(i)")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(.black)
+                .frame(width: 30, height: 20)
+                .offset(y: -10)
+            }
+          }
+          .frame(width: 220, height: 220)
+          .rotationEffect(.degrees(Double(i) * 6))
+        }
+        // Red progress arc
         Circle()
-          .trim(from: 0, to: progress)
-          .stroke(Color.red.opacity(0.5), style: StrokeStyle(lineWidth: 16, lineCap: .round))
+          .trim(from: 1 - progress, to: 1)
+          .stroke(Color.red, style: StrokeStyle(lineWidth: 32, lineCap: .round))
           .rotationEffect(.degrees(-90))
           .frame(width: 180, height: 180)
+        // Central knob
+        Circle()
+          .fill(Color.white)
+          .frame(width: 36, height: 36)
+          .overlay(
+            Circle()
+              .stroke(Color.black, lineWidth: 3)
+          )
         // Minute hand
         Rectangle()
-          .fill(Color.red)
-          .frame(width: 8, height: 80)
-          .offset(y: -40)
+          .fill(Color.blue)
+          .frame(width: 4, height: 70)
+          .offset(y: -35)
           .rotationEffect(.degrees(minuteHandAngle))
+        // Digital timer on hover
         if showDigitalTimer {
           Text(timeString)
             .font(.system(size: 36, weight: .bold, design: .monospaced))
         }
+
       }
       .onHover { hovering in
         showDigitalTimer = hovering
       }
-      var minuteHandAngle: Double {
-        // Start from top (12 o'clock) and move counterclockwise
-        let totalMinutes = Double(totalTime) / 60.0
-        let minutesElapsed = Double(totalTime - timeRemaining) / 60.0
-        return 0.0 - (minutesElapsed / totalMinutes) * 360.0
-      }
+
       HStack(spacing: 20) {
-        Button(action: startTimer) {
+        Button(action: { showDurationSheet = true }) {
           Text("Start")
         }
         .disabled(timerActive)
@@ -56,11 +90,41 @@ struct ContentView: View {
       }
     }
     .padding()
-    .frame(minWidth: 300, minHeight: 320)
+    .frame(minWidth: 480, minHeight: 520)
+    .sheet(isPresented: $showDurationSheet) {
+      VStack(spacing: 16) {
+        Text("Set Duration")
+          .font(.title2)
+        Stepper(value: $durationMinutes, in: 1...180) {
+          Text("Minutes: \(durationMinutes)")
+        }
+        HStack(spacing: 12) {
+          Button("Cancel") {
+            showDurationSheet = false
+          }
+          Button("Start") {
+            // configure and start
+            totalTimeSeconds = max(1, durationMinutes) * 60
+            timeRemaining = totalTimeSeconds
+            showDurationSheet = false
+            beginTimer()
+          }
+        }
+      }
+      .padding(24)
+      .frame(minWidth: 300)
+    }
   }
-  var totalTime: Int { 25 * 60 }
   var progress: CGFloat {
-    CGFloat(totalTime - timeRemaining) / CGFloat(totalTime)
+    guard totalTimeSeconds > 0 else { return 0 }
+    return CGFloat(totalTimeSeconds - timeRemaining) / CGFloat(totalTimeSeconds)
+  }
+
+  var minuteHandAngle: Double {
+    // 0 degrees is 12 o'clock, 360 degrees is a full circle
+    let totalMinutes = Double(totalTimeSeconds) / 60.0
+    let minutesElapsed = Double(totalTimeSeconds - timeRemaining) / 60.0
+    return (minutesElapsed / totalMinutes) * 360.0
   }
 
   var timeString: String {
@@ -70,7 +134,13 @@ struct ContentView: View {
   }
 
   func startTimer() {
+    // kept for backwards compatibility; prefer using beginTimer()
     guard !timerActive else { return }
+    beginTimer()
+  }
+
+  func beginTimer() {
+    timer?.invalidate()
     timerActive = true
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
       DispatchQueue.main.async {
@@ -91,7 +161,7 @@ struct ContentView: View {
 
   func resetTimer() {
     timer?.invalidate()
-    timeRemaining = 25 * 60
+    timeRemaining = totalTimeSeconds
     timerActive = false
   }
 }
