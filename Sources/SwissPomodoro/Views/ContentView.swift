@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 private enum Palette {
@@ -23,8 +24,8 @@ struct ContentView: View {
       dial
       Text(pomodoro.timeString)
         .font(.system(size: 38, weight: .semibold, design: .rounded).monospacedDigit())
-        .foregroundStyle(Palette.ink)
-      Text("Flow with your own rhythm.")
+        .foregroundStyle(pomodoro.phase == .finished ? Palette.red : Palette.ink)
+      Text(caption)
         .font(.system(size: 13, weight: .semibold, design: .rounded))
         .foregroundStyle(Palette.red)
       controls
@@ -57,6 +58,11 @@ struct ContentView: View {
       // Closing the window must not leave the run loop retaining the timer and
       // updating a detached state box forever.
       pomodoro.stop()
+    }
+    .onChange(of: pomodoro.phase) { _, newPhase in
+      guard newPhase == .finished else { return }
+      NSSound.beep()
+      NSApplication.shared.requestUserAttention(.informationalRequest)
     }
     .sheet(isPresented: $showDurationSheet) {
       VStack(spacing: 16) {
@@ -192,6 +198,17 @@ struct ContentView: View {
       }
       .buttonStyle(CaseButtonStyle(kind: .secondary))
       .disabled(pomodoro.phase == .idle)
+    }
+  }
+
+  private var caption: String {
+    switch pomodoro.phase {
+    case .running, .idle:
+      return "Flow with your own rhythm."
+    case .paused:
+      return "Paused."
+    case .finished:
+      return "Time's up — take a break."
     }
   }
 

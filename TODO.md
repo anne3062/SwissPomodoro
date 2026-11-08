@@ -61,8 +61,8 @@
       outlines, "Period"/"Light" controls, rounded window with material background.
 - [x] Duration presets (25/45/60 + custom) remembered in `@AppStorage`; the sheet
       now prefills from the last confirmed duration.
-- [ ] Show "done" state at 00:00 (color change, sound, banner) – right now
-      completion is silent.
+- [x] Show "done" state at 00:00 (color change, sound, banner) – completion is no
+      longer silent: red time, "Time's up" caption, system beep and dock bounce.
 - [ ] Menu bar item (`MenuBarExtra`) with remaining time and start/pause.
 - [ ] Window title / dock badge reflecting the remaining time.
 - [ ] Accessibility: labels for the dial and progress, VoiceOver announcements on
