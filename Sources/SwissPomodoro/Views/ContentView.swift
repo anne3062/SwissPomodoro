@@ -1,89 +1,48 @@
 import SwiftUI
 
+private enum Palette {
+  static let ink = Color(red: 0.10, green: 0.11, blue: 0.12)
+  static let red = Color(red: 0.83, green: 0.20, blue: 0.18)
+  static let caseTop = Color(red: 0.76, green: 0.85, blue: 0.88)
+  static let caseBottom = Color(red: 0.64, green: 0.76, blue: 0.80)
+  static let dial = Color(red: 0.97, green: 0.96, blue: 0.93)
+}
+
 struct ContentView: View {
   @State private var pomodoro = PomodoroTimer()
-  @State private var showDigitalTimer: Bool = false
   @State private var showDurationSheet: Bool = false
   @State private var durationMinutes: Int = PomodoroTimer.defaultMinutes
 
   var body: some View {
-    VStack(spacing: 32) {
-      Text("Pomodoro Timer")
-        .font(.largeTitle)
-        .padding(.top)
-      ZStack {
-        // Outer bold circle
-        Circle()
-          .stroke(Color.primary, lineWidth: 4)
-          .frame(width: 220, height: 220)
-        // Red progress arc, drawn behind the ticks so the labels stay readable
-        if pomodoro.progress > 0 {
-          Circle()
-            .trim(from: 0, to: CGFloat(pomodoro.progress))
-            .stroke(Color.red, style: StrokeStyle(lineWidth: 32, lineCap: .round))
-            .rotationEffect(.degrees(-90))
-            .frame(width: 180, height: 180)
-        }
-        // Tick marks
-        ForEach(0..<60) { tick in
-          let isMajor = tick % 5 == 0
-          Rectangle()
-            .fill(isMajor ? Color.primary : Color.primary.opacity(0.45))
-            .frame(width: isMajor ? 2 : 1, height: isMajor ? 14 : 7)
-            .offset(y: -(108 - (isMajor ? 7 : 3.5)))
-            .rotationEffect(.degrees(Double(tick) * 6))
-        }
-        // Hour labels, placed just inside the tick marks
-        ForEach(0..<12) { hour in
-          Text("\(hour * 5)")
-            .font(.system(size: 13, weight: .semibold))
-            .monospacedDigit()
-            .fixedSize()
-            .offset(y: -86)
-            .rotationEffect(.degrees(Double(hour) * 30))
-        }
-        // Central knob
-        Circle()
-          .fill(.background)
-          .frame(width: 36, height: 36)
-          .overlay(
-            Circle()
-              .stroke(Color.primary, lineWidth: 3)
-          )
-        // Minute hand
-        Rectangle()
-          .fill(Color.accentColor)
-          .frame(width: 4, height: 70)
-          .offset(y: -35)
-          .rotationEffect(.degrees(pomodoro.progress * 360))
-        // Digital timer on hover
-        if showDigitalTimer {
-          Text(pomodoro.timeString)
-            .font(.system(size: 36, weight: .bold, design: .monospaced))
-        }
-      }
-      .onHover { hovering in
-        showDigitalTimer = hovering
-      }
-
-      HStack(spacing: 20) {
-        Button {
-          startOrResume()
-        } label: {
-          Text(pomodoro.isPaused ? "Resume" : "Start")
-        }
-        .disabled(pomodoro.isRunning)
-        Button(action: { pomodoro.pause() }) {
-          Text("Pause")
-        }
-        .disabled(!pomodoro.isRunning)
-        Button(action: { pomodoro.reset() }) {
-          Text("Reset")
-        }
-      }
+    VStack(spacing: 16) {
+      header
+      dial
+      Text(pomodoro.timeString)
+        .font(.system(size: 38, weight: .semibold, design: .rounded).monospacedDigit())
+        .foregroundStyle(Palette.ink)
+      Text("Flow with your own rhythm.")
+        .font(.system(size: 13, weight: .semibold, design: .rounded))
+        .foregroundStyle(Palette.red)
+      controls
     }
-    .padding()
-    .frame(minWidth: 480, minHeight: 520)
+    .padding(26)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background {
+      RoundedRectangle(cornerRadius: 32, style: .continuous)
+        .fill(
+          LinearGradient(
+            colors: [Palette.caseTop, Palette.caseBottom],
+            startPoint: .top,
+            endPoint: .bottom
+          )
+        )
+    }
+    .overlay {
+      RoundedRectangle(cornerRadius: 32, style: .continuous)
+        .strokeBorder(Palette.ink, lineWidth: 5)
+    }
+    .padding(14)
+    .frame(minWidth: 400, minHeight: 560)
     .onDisappear {
       // Closing the window must not leave the run loop retaining the timer and
       // updating a detached state box forever.
@@ -111,12 +70,166 @@ struct ContentView: View {
     }
   }
 
-  func startOrResume() {
+  private var header: some View {
+    HStack {
+      Button {
+        showDurationSheet = true
+      } label: {
+        HStack(spacing: 8) {
+          Text("Period")
+          Text("\(pomodoro.totalSeconds / 60)")
+            .monospacedDigit()
+        }
+        .font(.system(size: 12, weight: .bold, design: .rounded))
+        .foregroundStyle(Palette.ink)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Capsule().fill(Palette.dial))
+        .overlay(Capsule().strokeBorder(Palette.ink, lineWidth: 2))
+      }
+      .buttonStyle(.plain)
+      .help("Change the session length")
+
+      Spacer()
+
+      VStack(spacing: 3) {
+        Circle()
+          .fill(pomodoro.isRunning ? Palette.red : Palette.red.opacity(0.3))
+          .frame(width: 16, height: 16)
+          .overlay(Circle().strokeBorder(Palette.ink, lineWidth: 2))
+        Text("Light")
+          .font(.system(size: 8, weight: .bold, design: .rounded))
+          .foregroundStyle(Palette.ink.opacity(0.65))
+      }
+    }
+  }
+
+  private var dial: some View {
+    ZStack {
+      Circle()
+        .fill(Palette.dial)
+      ProgressSector(progress: pomodoro.progress)
+        .fill(Palette.red)
+        .animation(.linear(duration: 0.5), value: pomodoro.progress)
+      Circle()
+        .strokeBorder(Palette.ink, lineWidth: 4)
+      // Tick marks
+      ForEach(0..<60) { tick in
+        let isMajor = tick % 5 == 0
+        Rectangle()
+          .fill(isMajor ? Palette.ink : Palette.ink.opacity(0.45))
+          .frame(width: isMajor ? 2 : 1, height: isMajor ? 14 : 7)
+          .offset(y: -(108 - (isMajor ? 7 : 3.5)))
+          .rotationEffect(.degrees(Double(tick) * 6))
+      }
+      // Hour labels, placed just inside the tick marks
+      ForEach(0..<12) { hour in
+        Text("\(hour * 5)")
+          .font(.system(size: 13, weight: .semibold, design: .rounded))
+          .monospacedDigit()
+          .foregroundStyle(Palette.ink)
+          .fixedSize()
+          .offset(y: -86)
+          .rotationEffect(.degrees(Double(hour) * 30))
+      }
+      // Central knob
+      Circle()
+        .fill(Palette.dial)
+        .frame(width: 34, height: 34)
+        .overlay(Circle().strokeBorder(Palette.ink, lineWidth: 3))
+    }
+    .frame(width: 220, height: 220)
+  }
+
+  private var controls: some View {
+    HStack(spacing: 12) {
+      Button {
+        startOrResume()
+      } label: {
+        Text(pomodoro.isPaused ? "Resume" : "Start")
+      }
+      .buttonStyle(CaseButtonStyle(kind: .primary))
+      .disabled(pomodoro.isRunning)
+
+      Button {
+        pomodoro.pause()
+      } label: {
+        Text("Pause")
+      }
+      .buttonStyle(CaseButtonStyle(kind: .secondary))
+      .disabled(!pomodoro.isRunning)
+
+      Button {
+        pomodoro.reset()
+      } label: {
+        Text("Reset")
+      }
+      .buttonStyle(CaseButtonStyle(kind: .secondary))
+    }
+  }
+
+  private func startOrResume() {
     if pomodoro.isPaused {
       pomodoro.resume()
     } else {
       showDurationSheet = true
     }
+  }
+}
+
+private struct CaseButtonStyle: ButtonStyle {
+  enum Kind {
+    case primary
+    case secondary
+  }
+
+  var kind: Kind
+
+  @Environment(\.isEnabled) private var isEnabled
+
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+      .font(.system(size: 13, weight: .bold, design: .rounded))
+      .foregroundStyle(kind == .primary ? Color.white : Palette.ink)
+      .padding(.horizontal, 18)
+      .padding(.vertical, 8)
+      .background {
+        Capsule().fill(kind == .primary ? Palette.red : Palette.dial)
+      }
+      .overlay {
+        Capsule().strokeBorder(Palette.ink, lineWidth: 2)
+      }
+      .opacity(isEnabled ? (configuration.isPressed ? 0.7 : 1) : 0.4)
+  }
+}
+
+/// Filled pie wedge from 12 o'clock clockwise, used as the progress indicator.
+private struct ProgressSector: Shape {
+  var progress: Double
+
+  var animatableData: Double {
+    get { progress }
+    set { progress = newValue }
+  }
+
+  func path(in rect: CGRect) -> Path {
+    var path = Path()
+    guard progress > 0 else { return path }
+    if progress >= 1 {
+      path.addEllipse(in: rect)
+      return path
+    }
+    let center = CGPoint(x: rect.midX, y: rect.midY)
+    path.move(to: center)
+    path.addArc(
+      center: center,
+      radius: min(rect.width, rect.height) / 2,
+      startAngle: .degrees(-90),
+      endAngle: .degrees(-90 + 360 * progress),
+      clockwise: false
+    )
+    path.closeSubpath()
+    return path
   }
 }
 

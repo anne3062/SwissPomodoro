@@ -30,8 +30,8 @@
       fired one extra tick after `timeRemaining` reached 0 before flipping
       `timerActive`. The timer now stops exactly at zero and in `.onDisappear`.
 - [x] **Hardcoded `.black`/`.white` colors break dark mode**: the dial, ticks, and
-      knob disappeared in dark appearance. Ring, ticks, labels, knob and hand now
-      use adaptive colors (`.primary`, `.background`, `.accentColor`).
+      knob disappeared in dark appearance. The redesigned case and dial use their
+      own fixed palette, so the device reads the same in either appearance.
 
 ### Architecture
 - [x] Extract timer logic out of the view into an `@Observable` model (or a pure
@@ -55,9 +55,9 @@
 ### UX / GUI (from sketch.png / sketch2.png)
 - [ ] Single primary Start/Pause button with Space as shortcut, instead of two
       always-visible buttons with disabled states.
-- [ ] Show the digital time at all times (or on click), not only on hover – the
+- [x] Show the digital time at all times (or on click), not only on hover – the
       current hover-only text is undiscoverable.
-- [ ] Restyle toward the sketch: light-blue case, red progress sector, bold
+- [x] Restyle toward the sketch: light-blue case, red progress sector, bold
       outlines, "Period"/"Light" controls, rounded window with material background.
 - [ ] Duration presets (25/45/60 + custom) remembered in `@AppStorage`; the sheet
       currently starts from whatever value was last stepped.
@@ -67,7 +67,7 @@
 - [ ] Window title / dock badge reflecting the remaining time.
 - [ ] Accessibility: labels for the dial and progress, VoiceOver announcements on
       state changes, respect Reduce Motion for the hand/arc animation.
-- [ ] Monospaced digits for the time string so the layout does not jitter.
+- [x] Monospaced digits for the time string so the layout does not jitter.
 
 ### Housekeeping
 - [ ] Drop the redundant `.enableExperimentalFeature("StrictConcurrency")` in
