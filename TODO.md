@@ -41,10 +41,9 @@
       the model owns `totalSeconds`/`remainingSeconds`, the view only keeps the
       picker value.
 - [x] Delete unused `startTimer()` ("kept for backwards compatibility" – nothing calls it).
-- [ ] Ship a real `.app` bundle. `swift run` produces a bare executable with no
-      bundle identifier, which blocks `UNUserNotificationCenter` (the notification
-      task) and gives the menu bar/dock a generic icon. Add an Xcode project or a
-      bundling script (`Info.plist` + `.app` layout).
+- [x] Ship a real `.app` bundle. `Scripts/bundle.sh` assembles and ad-hoc signs
+      `SwissPomodoro.app` from `Resources/Info.plist`, giving the app a bundle
+      identifier for notifications and a proper name in the dock/menu bar.
 
 ### Testing
 - [ ] Replace the `XCTAssertTrue(true)` placeholder with real tests for the

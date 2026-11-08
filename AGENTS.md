@@ -3,6 +3,7 @@
 ## Commands
 - **Build**: `swift build`
 - **Run**: `swift run`
+- **Bundle app**: `Scripts/bundle.sh` (builds `SwissPomodoro.app`)
 - **Test all**: `swift test`
 - **Test single**: `swift test --filter <TestSuite>.<testMethod>`
 - **Lint**: No linter configured
