@@ -4,6 +4,7 @@ import SwiftUI
 @main
 struct SwissPomodoroApp: App {
   @State private var pomodoro = PomodoroTimer()
+  private let notifier = CompletionNotifier()
 
   var body: some Scene {
     Window("SwissPomodoro", id: "main") {
@@ -16,6 +17,10 @@ struct SwissPomodoroApp: App {
       MenuBarContent(pomodoro: pomodoro)
     } label: {
       MenuBarLabel(pomodoro: pomodoro)
+    }
+
+    Settings {
+      SettingsView()
     }
   }
 }

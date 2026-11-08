@@ -16,6 +16,7 @@ struct ContentView: View {
   @AppStorage(Preferences.sessionMinutesKey) private var storedMinutes: Int = PomodoroTimer.defaultMinutes
   @State private var showDurationSheet: Bool = false
   @State private var durationMinutes: Int = PomodoroTimer.defaultMinutes
+  @AppStorage(Preferences.soundEnabledKey) private var soundEnabled: Bool = true
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   var body: some View {
@@ -60,7 +61,9 @@ struct ContentView: View {
     .navigationTitle(windowTitle)
     .onChange(of: pomodoro.phase) { _, newPhase in
       guard newPhase == .finished else { return }
-      NSSound.beep()
+      if soundEnabled {
+        NSSound.beep()
+      }
       NSApplication.shared.requestUserAttention(.informationalRequest)
       NSAccessibility.post(
         element: NSApplication.shared,

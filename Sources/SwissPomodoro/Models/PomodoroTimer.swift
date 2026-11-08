@@ -1,6 +1,10 @@
 import Foundation
 import Observation
 
+extension Notification.Name {
+  static let pomodoroSessionDidFinish = Notification.Name("pomodoroSessionDidFinish")
+}
+
 /// Timer state and countdown logic for a single Pomodoro session.
 ///
 /// The remaining time is derived from a deadline rather than counted down per
@@ -96,8 +100,7 @@ final class PomodoroTimer {
       remainingSeconds = remaining
       phase = .paused
     } else {
-      remainingSeconds = 0
-      phase = .finished
+      finish()
     }
   }
 
@@ -122,10 +125,15 @@ final class PomodoroTimer {
     if remaining > 0 {
       remainingSeconds = remaining
     } else {
-      remainingSeconds = 0
-      phase = .finished
-      stopTicking()
+      finish()
     }
+  }
+
+  private func finish() {
+    remainingSeconds = 0
+    phase = .finished
+    stopTicking()
+    NotificationCenter.default.post(name: .pomodoroSessionDidFinish, object: self)
   }
 
   private func scheduleTicks() {

@@ -7,9 +7,11 @@
 - [x] Create main Pomodoro timer view
 - [x] Add basic timer functionality (start, pause, reset)
 - [x] Design minimal UI for macOS 14+
-- [ ] Implement settings/preferences
-- [ ] Add notifications for session completion
-      (must also fire while the window is closed; hook into the model, not the view).
+- [x] Implement settings/preferences (Settings window: default session length and
+      a completion-sound toggle, shared through `@AppStorage`).
+- [x] Add notifications for session completion — posted from the model's finish
+      event, so they also fire while the window is closed. Requires running the
+      bundled app (`Scripts/bundle.sh`); `swift run` has no bundle identifier.
 - [x] Write unit tests for timer logic
 
 ### Bugs (fix before adding features)
