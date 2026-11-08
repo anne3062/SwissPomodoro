@@ -34,11 +34,13 @@
       use adaptive colors (`.primary`, `.background`, `.accentColor`).
 
 ### Architecture
-- [ ] Extract timer logic out of the view into an `@Observable` model (or a pure
+- [x] Extract timer logic out of the view into an `@Observable` model (or a pure
       state struct) so it is testable and the view holds no `Timer` in `@State`.
-- [ ] Remove duplicated duration state (`durationMinutes` + `totalTimeSeconds`);
-      one source of truth for "chosen duration" vs. "current session".
-- [ ] Delete unused `startTimer()` ("kept for backwards compatibility" – nothing calls it).
+      `Models/PomodoroTimer.swift` now owns phase, deadline, ticks and formatting.
+- [x] Remove duplicated duration state (`durationMinutes` + `totalTimeSeconds`);
+      the model owns `totalSeconds`/`remainingSeconds`, the view only keeps the
+      picker value.
+- [x] Delete unused `startTimer()` ("kept for backwards compatibility" – nothing calls it).
 - [ ] Ship a real `.app` bundle. `swift run` produces a bare executable with no
       bundle identifier, which blocks `UNUserNotificationCenter` (the notification
       task) and gives the menu bar/dock a generic icon. Add an Xcode project or a
