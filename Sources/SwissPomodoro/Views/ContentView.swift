@@ -58,6 +58,9 @@ struct ContentView: View {
         pomodoro.setIdleDuration(minutes: storedMinutes)
       }
     }
+    .onChange(of: storedMinutes) { _, newValue in
+      pomodoro.setIdleDuration(minutes: newValue)
+    }
     .navigationTitle(windowTitle)
     .onChange(of: pomodoro.phase) { _, newPhase in
       guard newPhase == .finished else { return }

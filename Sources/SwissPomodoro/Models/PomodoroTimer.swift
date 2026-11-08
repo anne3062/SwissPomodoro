@@ -35,7 +35,6 @@ final class PomodoroTimer {
   }
 
   var isRunning: Bool { phase == .running }
-  var isPaused: Bool { phase == .paused }
 
   /// Fraction of the session that has elapsed, 0...1.
   var progress: Double {
@@ -108,14 +107,6 @@ final class PomodoroTimer {
     stopTicking()
     remainingSeconds = totalSeconds
     phase = .idle
-  }
-
-  /// Stops counting without discarding the session, e.g. when the window closes.
-  func stop() {
-    stopTicking()
-    if phase == .running {
-      phase = .paused
-    }
   }
 
   /// Recomputes the remaining time from the deadline. Called every tick.
