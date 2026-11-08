@@ -19,9 +19,9 @@
 - [x] **Progress arc grows counter-clockwise, opposite the hand** (`ContentView.swift:48-52`).
       The arc is now trimmed from 0 to `progress`, so it sweeps clockwise from
       12 o'clock, and it is drawn behind the ticks/labels.
-- [ ] **Pause is destructive**: after pausing, the only Start path re-opens the
-      duration sheet and restarts from the full duration (`ContentView.swift:78-116`).
-      Add resume vs. new-session states (Start/Resume toggle + "New session" menu).
+- [x] **Pause is destructive**: after pausing, the only Start path re-opened the
+      duration sheet and restarted from the full duration (`ContentView.swift:78-116`).
+      The primary button now reads "Resume" and continues the paused session.
 - [ ] **Countdown drifts and stalls**: it decrements a counter per tick instead of
       tracking a deadline, so system sleep, a busy main thread, or dragging the
       window (timers in `.default` run-loop mode are paused by live resize) makes

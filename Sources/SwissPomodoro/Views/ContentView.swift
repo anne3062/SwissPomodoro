@@ -71,8 +71,8 @@ struct ContentView: View {
       }
 
       HStack(spacing: 20) {
-        Button(action: { showDurationSheet = true }) {
-          Text("Start")
+        Button(action: startOrResume) {
+          Text(isPaused ? "Resume" : "Start")
         }
         .disabled(timerActive)
         Button(action: pauseTimer) {
@@ -110,6 +110,10 @@ struct ContentView: View {
       .frame(minWidth: 300)
     }
   }
+  var isPaused: Bool {
+    !timerActive && timeRemaining > 0 && timeRemaining < totalTimeSeconds
+  }
+
   var progress: CGFloat {
     guard totalTimeSeconds > 0 else { return 0 }
     return CGFloat(totalTimeSeconds - timeRemaining) / CGFloat(totalTimeSeconds)
@@ -126,6 +130,14 @@ struct ContentView: View {
     let minutes = timeRemaining / 60
     let seconds = timeRemaining % 60
     return String(format: "%02d:%02d", minutes, seconds)
+  }
+
+  func startOrResume() {
+    if isPaused {
+      beginTimer()
+    } else {
+      showDurationSheet = true
+    }
   }
 
   func startTimer() {
