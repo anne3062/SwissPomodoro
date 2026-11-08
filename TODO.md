@@ -9,7 +9,8 @@
 - [x] Design minimal UI for macOS 14+
 - [ ] Implement settings/preferences
 - [ ] Add notifications for session completion
-- [ ] Write unit tests for timer logic
+      (must also fire while the window is closed; hook into the model, not the view).
+- [x] Write unit tests for timer logic
 
 ### Bugs (fix before adding features)
 - [x] **Dial numbers sit 180° away from their ticks** (`ContentView.swift:23-46`).
@@ -26,9 +27,9 @@
       sleep, a busy main thread, or dragging the window made the session run long.
       The remaining time is now derived from an `endDate` and the timer runs in
       `.common` run-loop mode.
-- [x] **Timer never stops when the window closes** (no `.onDisappear`), and it
-      fired one extra tick after `timeRemaining` reached 0 before flipping
-      `timerActive`. The timer now stops exactly at zero and in `.onDisappear`.
+- [x] **Timer never stops when the window closes** (no `.onDisappear`). The timer
+      stops exactly at zero, and the model is now owned by the app so a running
+      session deliberately survives closing the window (the menu bar shows it).
 - [x] **Hardcoded `.black`/`.white` colors break dark mode**: the dial, ticks, and
       knob disappeared in dark appearance. The redesigned case and dial use their
       own fixed palette, so the device reads the same in either appearance.
@@ -63,7 +64,7 @@
       now prefills from the last confirmed duration.
 - [x] Show "done" state at 00:00 (color change, sound, banner) – completion is no
       longer silent: red time, "Time's up" caption, system beep and dock bounce.
-- [ ] Menu bar item (`MenuBarExtra`) with remaining time and start/pause.
+- [x] Menu bar item (`MenuBarExtra`) with remaining time and start/pause.
 - [ ] Window title / dock badge reflecting the remaining time.
 - [ ] Accessibility: labels for the dial and progress, VoiceOver announcements on
       state changes, respect Reduce Motion for the hand/arc animation.

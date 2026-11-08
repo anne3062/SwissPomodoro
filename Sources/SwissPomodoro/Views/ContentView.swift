@@ -9,12 +9,11 @@ private enum Palette {
   static let dial = Color(red: 0.97, green: 0.96, blue: 0.93)
 }
 
-private let durationDefaultsKey = "sessionMinutes"
-private let durationPresets = [15, 25, 45, 60]
+private let durationPresets = Preferences.durationPresets
 
 struct ContentView: View {
-  @State private var pomodoro = PomodoroTimer()
-  @AppStorage(durationDefaultsKey) private var storedMinutes: Int = PomodoroTimer.defaultMinutes
+  var pomodoro: PomodoroTimer
+  @AppStorage(Preferences.sessionMinutesKey) private var storedMinutes: Int = PomodoroTimer.defaultMinutes
   @State private var showDurationSheet: Bool = false
   @State private var durationMinutes: Int = PomodoroTimer.defaultMinutes
 
@@ -53,11 +52,6 @@ struct ContentView: View {
         durationMinutes = storedMinutes
         pomodoro.setIdleDuration(minutes: storedMinutes)
       }
-    }
-    .onDisappear {
-      // Closing the window must not leave the run loop retaining the timer and
-      // updating a detached state box forever.
-      pomodoro.stop()
     }
     .onChange(of: pomodoro.phase) { _, newPhase in
       guard newPhase == .finished else { return }
@@ -183,9 +177,9 @@ struct ContentView: View {
   private var controls: some View {
     HStack(spacing: 12) {
       Button {
-        primaryAction()
+        pomodoro.toggle(at: storedMinutes)
       } label: {
-        Text(primaryTitle)
+        Text(pomodoro.primaryActionTitle)
           .frame(minWidth: 54)
       }
       .buttonStyle(CaseButtonStyle(kind: .primary))
@@ -209,28 +203,6 @@ struct ContentView: View {
       return "Paused."
     case .finished:
       return "Time's up — take a break."
-    }
-  }
-
-  private var primaryTitle: String {
-    switch pomodoro.phase {
-    case .running:
-      return "Pause"
-    case .paused:
-      return "Resume"
-    case .idle, .finished:
-      return "Start"
-    }
-  }
-
-  private func primaryAction() {
-    switch pomodoro.phase {
-    case .running:
-      pomodoro.pause()
-    case .paused:
-      pomodoro.resume()
-    case .idle, .finished:
-      presentDurationSheet()
     }
   }
 
@@ -298,6 +270,6 @@ private struct ProgressSector: Shape {
 
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
-    ContentView()
+    ContentView(pomodoro: PomodoroTimer())
   }
 }

@@ -43,6 +43,18 @@ final class PomodoroTimer {
     String(format: "%02d:%02d", remainingSeconds / 60, remainingSeconds % 60)
   }
 
+  /// Title for the primary start/pause/resume control.
+  var primaryActionTitle: String {
+    switch phase {
+    case .running:
+      return "Pause"
+    case .paused:
+      return "Resume"
+    case .idle, .finished:
+      return "Start"
+    }
+  }
+
   /// Starts a new session of `minutes` length, replacing any current one.
   func start(minutes: Int) {
     totalSeconds = max(1, minutes) * 60
@@ -56,6 +68,18 @@ final class PomodoroTimer {
     guard phase == .idle else { return }
     totalSeconds = max(1, minutes) * 60
     remainingSeconds = totalSeconds
+  }
+
+  /// Starts a session when idle or finished, otherwise toggles pause/resume.
+  func toggle(at minutes: Int) {
+    switch phase {
+    case .running:
+      pause()
+    case .paused:
+      resume()
+    case .idle, .finished:
+      start(minutes: minutes)
+    }
   }
 
   func resume() {
