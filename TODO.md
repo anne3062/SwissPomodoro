@@ -46,9 +46,9 @@
       identifier for notifications and a proper name in the dock/menu bar.
 
 ### Testing
-- [ ] Replace the `XCTAssertTrue(true)` placeholder with real tests for the
+- [x] Replace the `XCTAssertTrue(true)` placeholder with real tests for the
       extracted timer model (elapsed time, pause/resume, completion, reset).
-- [ ] Use Swift Testing (`@Suite` / `@Test`) per AGENTS.md; the current file uses XCTest.
+- [x] Use Swift Testing (`@Suite` / `@Test`) per AGENTS.md; the current file uses XCTest.
 - [ ] Add `swift build && swift test` to CI. Note: `swift build` currently fails on
       a CommandLineTools-only toolchain (`SwiftUIMacros` plugin missing for
       `@State`); a full Xcode install is required.

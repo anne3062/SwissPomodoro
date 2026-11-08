@@ -9,7 +9,7 @@ import Observation
 @MainActor
 @Observable
 final class PomodoroTimer {
-  enum Phase {
+  enum Phase: Equatable {
     case idle
     case running
     case paused
