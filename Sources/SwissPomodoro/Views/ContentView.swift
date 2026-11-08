@@ -18,7 +18,7 @@ struct ContentView: View {
       ZStack {
         // Outer bold circle
         Circle()
-          .stroke(Color.black, lineWidth: 4)
+          .stroke(Color.primary, lineWidth: 4)
           .frame(width: 220, height: 220)
         // Red progress arc, drawn behind the ticks so the labels stay readable
         if progress > 0 {
@@ -48,15 +48,15 @@ struct ContentView: View {
         }
         // Central knob
         Circle()
-          .fill(Color.white)
+          .fill(.background)
           .frame(width: 36, height: 36)
           .overlay(
             Circle()
-              .stroke(Color.black, lineWidth: 3)
+              .stroke(Color.primary, lineWidth: 3)
           )
         // Minute hand
         Rectangle()
-          .fill(Color.blue)
+          .fill(Color.accentColor)
           .frame(width: 4, height: 70)
           .offset(y: -35)
           .rotationEffect(.degrees(minuteHandAngle))

@@ -29,10 +29,9 @@
 - [x] **Timer never stops when the window closes** (no `.onDisappear`), and it
       fired one extra tick after `timeRemaining` reached 0 before flipping
       `timerActive`. The timer now stops exactly at zero and in `.onDisappear`.
-- [ ] **Hardcoded `.black`/`.white` colors break dark mode**: the dial, ticks, and
-      knob disappear in dark appearance. Use semantic colors (`Color.primary`,
-      `.background`, `.quaternary`) or a fixed light "instrument" surface with an
-      explicit background.
+- [x] **Hardcoded `.black`/`.white` colors break dark mode**: the dial, ticks, and
+      knob disappeared in dark appearance. Ring, ticks, labels, knob and hand now
+      use adaptive colors (`.primary`, `.background`, `.accentColor`).
 
 ### Architecture
 - [ ] Extract timer logic out of the view into an `@Observable` model (or a pure
