@@ -6,6 +6,7 @@
 - **Bundle app**: `Scripts/bundle.sh` (builds `SwissPomodoro.app`)
 - **Test all**: `swift test`
 - **Test single**: `swift test --filter <TestSuite>.<testMethod>`
+- **CI check**: `Scripts/ci.sh` (build + test, requires full Xcode)
 - **Lint**: No linter configured
 - **Format**: No formatter configured
 

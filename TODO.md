@@ -49,9 +49,8 @@
 - [x] Replace the `XCTAssertTrue(true)` placeholder with real tests for the
       extracted timer model (elapsed time, pause/resume, completion, reset).
 - [x] Use Swift Testing (`@Suite` / `@Test`) per AGENTS.md; the current file uses XCTest.
-- [ ] Add `swift build && swift test` to CI. Note: `swift build` currently fails on
-      a CommandLineTools-only toolchain (`SwiftUIMacros` plugin missing for
-      `@State`); a full Xcode install is required.
+- [x] Add `swift build && swift test` to CI. `Scripts/ci.sh` does it and fails fast
+      when the active toolchain is CommandLineTools only (no SwiftUI macros).
 
 ### UX / GUI (from sketch.png / sketch2.png)
 - [ ] Single primary Start/Pause button with Space as shortcut, instead of two
