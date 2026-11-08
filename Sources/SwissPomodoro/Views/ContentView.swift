@@ -8,8 +8,12 @@ private enum Palette {
   static let dial = Color(red: 0.97, green: 0.96, blue: 0.93)
 }
 
+private let durationDefaultsKey = "sessionMinutes"
+private let durationPresets = [15, 25, 45, 60]
+
 struct ContentView: View {
   @State private var pomodoro = PomodoroTimer()
+  @AppStorage(durationDefaultsKey) private var storedMinutes: Int = PomodoroTimer.defaultMinutes
   @State private var showDurationSheet: Bool = false
   @State private var durationMinutes: Int = PomodoroTimer.defaultMinutes
 
@@ -43,6 +47,12 @@ struct ContentView: View {
     }
     .padding(14)
     .frame(minWidth: 400, minHeight: 560)
+    .onAppear {
+      if pomodoro.phase == .idle {
+        durationMinutes = storedMinutes
+        pomodoro.setIdleDuration(minutes: storedMinutes)
+      }
+    }
     .onDisappear {
       // Closing the window must not leave the run loop retaining the timer and
       // updating a detached state box forever.
@@ -52,28 +62,51 @@ struct ContentView: View {
       VStack(spacing: 16) {
         Text("Set Duration")
           .font(.title2)
+        HStack(spacing: 8) {
+          ForEach(durationPresets, id: \.self) { minutes in
+            Button {
+              durationMinutes = minutes
+            } label: {
+              Text("\(minutes)")
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .monospacedDigit()
+                .frame(minWidth: 34)
+                .padding(.vertical, 6)
+                .background {
+                  Capsule().fill(minutes == durationMinutes ? Palette.red : Palette.dial)
+                }
+                .overlay {
+                  Capsule().strokeBorder(Palette.ink, lineWidth: 1.5)
+                }
+                .foregroundStyle(minutes == durationMinutes ? Color.white : Palette.ink)
+            }
+            .buttonStyle(.plain)
+          }
+        }
         Stepper(value: $durationMinutes, in: 1...180) {
           Text("Minutes: \(durationMinutes)")
+            .monospacedDigit()
         }
         HStack(spacing: 12) {
           Button("Cancel") {
             showDurationSheet = false
           }
           Button("Start") {
+            storedMinutes = durationMinutes
             showDurationSheet = false
             pomodoro.start(minutes: durationMinutes)
           }
         }
       }
       .padding(24)
-      .frame(minWidth: 300)
+      .frame(minWidth: 320)
     }
   }
 
   private var header: some View {
     HStack {
       Button {
-        showDurationSheet = true
+        presentDurationSheet()
       } label: {
         HStack(spacing: 8) {
           Text("Period")
@@ -180,8 +213,13 @@ struct ContentView: View {
     case .paused:
       pomodoro.resume()
     case .idle, .finished:
-      showDurationSheet = true
+      presentDurationSheet()
     }
+  }
+
+  private func presentDurationSheet() {
+    durationMinutes = storedMinutes
+    showDurationSheet = true
   }
 }
 

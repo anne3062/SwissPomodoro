@@ -59,8 +59,8 @@
       current hover-only text is undiscoverable.
 - [x] Restyle toward the sketch: light-blue case, red progress sector, bold
       outlines, "Period"/"Light" controls, rounded window with material background.
-- [ ] Duration presets (25/45/60 + custom) remembered in `@AppStorage`; the sheet
-      currently starts from whatever value was last stepped.
+- [x] Duration presets (25/45/60 + custom) remembered in `@AppStorage`; the sheet
+      now prefills from the last confirmed duration.
 - [ ] Show "done" state at 00:00 (color change, sound, banner) – right now
       completion is silent.
 - [ ] Menu bar item (`MenuBarExtra`) with remaining time and start/pause.

@@ -51,6 +51,13 @@ final class PomodoroTimer {
     scheduleTicks()
   }
 
+  /// Resizes an idle session, e.g. from the persisted default duration.
+  func setIdleDuration(minutes: Int) {
+    guard phase == .idle else { return }
+    totalSeconds = max(1, minutes) * 60
+    remainingSeconds = totalSeconds
+  }
+
   func resume() {
     guard phase == .paused, remainingSeconds > 0 else { return }
     phase = .running
