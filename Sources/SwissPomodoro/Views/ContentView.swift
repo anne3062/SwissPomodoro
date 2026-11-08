@@ -19,30 +19,23 @@ struct ContentView: View {
         Circle()
           .stroke(Color.black, lineWidth: 4)
           .frame(width: 220, height: 220)
-        // Tick marks and numbers
-        ForEach(0..<60) { i in
-          VStack {
-            if i % 5 == 0 {
-              Rectangle()
-                .fill(Color.black)
-                .frame(width: 2, height: 16)
-            } else {
-              Rectangle()
-                .fill(Color.black)
-                .frame(width: 1, height: 8)
-                .opacity(0.5)
-            }
-            Spacer()
-            if i % 5 == 0 {
-              Text("\(i)")
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
-                .frame(width: 30, height: 20)
-                .offset(y: -10)
-            }
-          }
-          .frame(width: 220, height: 220)
-          .rotationEffect(.degrees(Double(i) * 6))
+        // Tick marks
+        ForEach(0..<60) { tick in
+          let isMajor = tick % 5 == 0
+          Rectangle()
+            .fill(isMajor ? Color.primary : Color.primary.opacity(0.45))
+            .frame(width: isMajor ? 2 : 1, height: isMajor ? 14 : 7)
+            .offset(y: -(108 - (isMajor ? 7 : 3.5)))
+            .rotationEffect(.degrees(Double(tick) * 6))
+        }
+        // Hour labels, placed just inside the tick marks
+        ForEach(0..<12) { hour in
+          Text("\(hour * 5)")
+            .font(.system(size: 13, weight: .semibold))
+            .monospacedDigit()
+            .fixedSize()
+            .offset(y: -86)
+            .rotationEffect(.degrees(Double(hour) * 30))
         }
         // Red progress arc
         Circle()

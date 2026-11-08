@@ -12,11 +12,10 @@
 - [ ] Write unit tests for timer logic
 
 ### Bugs (fix before adding features)
-- [ ] **Dial numbers sit 180° away from their ticks** (`ContentView.swift:23-46`).
+- [x] **Dial numbers sit 180° away from their ticks** (`ContentView.swift:23-46`).
       Each `VStack` pins the number to the bottom of the 220pt frame while the tick
       is at the top, so "0" renders at 6 o'clock and "30" at 12 o'clock.
-      Put the number just inside the tick (e.g. tick + 8pt padding, or use
-      `Text.rotationEffect` + explicit radius) instead of a bottom `Spacer()`.
+      Labels are now placed at an explicit radius and rotated with their tick.
 - [ ] **Progress arc grows counter-clockwise, opposite the hand** (`ContentView.swift:48-52`).
       `trim(from: 1 - progress, to: 1)` keeps the arc anchored at 12 o'clock and
       extends it backwards. Use `trim(from: 0, to: progress)` with the `-90°`
