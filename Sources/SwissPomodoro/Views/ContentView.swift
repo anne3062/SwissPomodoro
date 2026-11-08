@@ -16,6 +16,7 @@ struct ContentView: View {
   @AppStorage(Preferences.sessionMinutesKey) private var storedMinutes: Int = PomodoroTimer.defaultMinutes
   @State private var showDurationSheet: Bool = false
   @State private var durationMinutes: Int = PomodoroTimer.defaultMinutes
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   var body: some View {
     VStack(spacing: 16) {
@@ -24,6 +25,9 @@ struct ContentView: View {
       Text(pomodoro.timeString)
         .font(.system(size: 38, weight: .semibold, design: .rounded).monospacedDigit())
         .foregroundStyle(pomodoro.phase == .finished ? Palette.red : Palette.ink)
+        .accessibilityElement()
+        .accessibilityLabel("Time remaining")
+        .accessibilityValue(pomodoro.timeString)
       Text(caption)
         .font(.system(size: 13, weight: .semibold, design: .rounded))
         .foregroundStyle(Palette.red)
@@ -53,10 +57,19 @@ struct ContentView: View {
         pomodoro.setIdleDuration(minutes: storedMinutes)
       }
     }
+    .navigationTitle(windowTitle)
     .onChange(of: pomodoro.phase) { _, newPhase in
       guard newPhase == .finished else { return }
       NSSound.beep()
       NSApplication.shared.requestUserAttention(.informationalRequest)
+      NSAccessibility.post(
+        element: NSApplication.shared,
+        notification: .announcementRequested,
+        userInfo: [
+          .announcement: "Session complete. Take a break.",
+          .priority: NSAccessibilityPriorityLevel.high.rawValue,
+        ]
+      )
     }
     .sheet(isPresented: $showDurationSheet) {
       VStack(spacing: 16) {
@@ -134,6 +147,9 @@ struct ContentView: View {
           .font(.system(size: 8, weight: .bold, design: .rounded))
           .foregroundStyle(Palette.ink.opacity(0.65))
       }
+      .accessibilityElement(children: .ignore)
+      .accessibilityLabel("Session light")
+      .accessibilityValue(pomodoro.isRunning ? "On" : "Off")
     }
   }
 
@@ -143,7 +159,7 @@ struct ContentView: View {
         .fill(Palette.dial)
       ProgressSector(progress: pomodoro.progress)
         .fill(Palette.red)
-        .animation(.linear(duration: 0.5), value: pomodoro.progress)
+        .animation(reduceMotion ? nil : .linear(duration: 0.5), value: pomodoro.progress)
       Circle()
         .strokeBorder(Palette.ink, lineWidth: 4)
       // Tick marks
@@ -172,6 +188,9 @@ struct ContentView: View {
         .overlay(Circle().strokeBorder(Palette.ink, lineWidth: 3))
     }
     .frame(width: 220, height: 220)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel("Session progress")
+    .accessibilityValue(progressDescription)
   }
 
   private var controls: some View {
@@ -192,6 +211,23 @@ struct ContentView: View {
       }
       .buttonStyle(CaseButtonStyle(kind: .secondary))
       .disabled(pomodoro.phase == .idle)
+    }
+  }
+
+  private var progressDescription: String {
+    "\(Int((pomodoro.progress * 100).rounded())) percent"
+  }
+
+  private var windowTitle: String {
+    switch pomodoro.phase {
+    case .idle:
+      return "SwissPomodoro"
+    case .running:
+      return "\(pomodoro.timeString) — SwissPomodoro"
+    case .paused:
+      return "Paused — SwissPomodoro"
+    case .finished:
+      return "Time's up — SwissPomodoro"
     }
   }
 

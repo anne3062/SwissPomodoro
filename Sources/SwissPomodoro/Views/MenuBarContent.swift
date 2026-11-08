@@ -10,6 +10,22 @@ struct MenuBarLabel: View {
       Text(pomodoro.timeString)
         .monospacedDigit()
     }
+    .onAppear {
+      updateDockBadge()
+    }
+    .onChange(of: pomodoro.timeString) { _, _ in
+      updateDockBadge()
+    }
+    .onChange(of: pomodoro.phase) { _, _ in
+      updateDockBadge()
+    }
+  }
+
+  /// The status bar label is the only view that is mounted for the whole app
+  /// lifetime, so the dock badge is driven from here.
+  private func updateDockBadge() {
+    let showsBadge = pomodoro.phase == .running || pomodoro.phase == .paused
+    NSApplication.shared.dockTile.badgeLabel = showsBadge ? pomodoro.timeString : nil
   }
 }
 
