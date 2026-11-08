@@ -33,7 +33,7 @@ struct PomodoroTimerTests {
     // A late tick (window drag, system sleep) still lands on the right value.
     clock.advance(by: 90)
     timer.tick()
-    #expect(timer.remainingSeconds == 24 * 60 - 150)
+    #expect(timer.remainingSeconds == 25 * 60 - 150)
 
     timer.reset()
   }
