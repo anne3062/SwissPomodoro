@@ -4,6 +4,7 @@ struct ContentView: View {
   @State private var timeRemaining: Int = 25 * 60
   @State private var timerActive: Bool = false
   @State private var timer: Timer? = nil
+  @State private var endDate: Date? = nil
   @State private var showDigitalTimer: Bool = false
   @State private var showDurationSheet: Bool = false
   @State private var durationMinutes: Int = 25
@@ -147,27 +148,53 @@ struct ContentView: View {
   }
 
   func beginTimer() {
+    guard timeRemaining > 0 else { return }
     timer?.invalidate()
+    endDate = Date().addingTimeInterval(TimeInterval(timeRemaining))
     timerActive = true
-    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-      DispatchQueue.main.async {
-        if timeRemaining > 0 {
-          timeRemaining -= 1
-        } else {
-          timer?.invalidate()
-          timerActive = false
-        }
-      }
+    // `.common` mode keeps the countdown updating while the window is dragged or
+    // a menu is tracking; the remaining time is derived from `endDate`, so ticks
+    // that are late or skipped (sleep, main thread stalls) do not drift.
+    let newTimer = Timer(timeInterval: 0.5, repeats: true) { _ in
+      updateRemaining()
+    }
+    RunLoop.main.add(newTimer, forMode: .common)
+    timer = newTimer
+  }
+
+  func updateRemaining() {
+    guard let endDate else {
+      timer?.invalidate()
+      timer = nil
+      timerActive = false
+      return
+    }
+    let remaining = endDate.timeIntervalSinceNow
+    if remaining > 0 {
+      timeRemaining = Int(ceil(remaining))
+    } else {
+      timeRemaining = 0
+      timer?.invalidate()
+      timer = nil
+      timerActive = false
+      self.endDate = nil
     }
   }
 
   func pauseTimer() {
+    if let endDate {
+      timeRemaining = max(0, Int(ceil(endDate.timeIntervalSinceNow)))
+    }
     timer?.invalidate()
+    timer = nil
+    endDate = nil
     timerActive = false
   }
 
   func resetTimer() {
     timer?.invalidate()
+    timer = nil
+    endDate = nil
     timeRemaining = totalTimeSeconds
     timerActive = false
   }

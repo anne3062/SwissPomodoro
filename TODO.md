@@ -22,11 +22,10 @@
 - [x] **Pause is destructive**: after pausing, the only Start path re-opened the
       duration sheet and restarted from the full duration (`ContentView.swift:78-116`).
       The primary button now reads "Resume" and continues the paused session.
-- [ ] **Countdown drifts and stalls**: it decrements a counter per tick instead of
-      tracking a deadline, so system sleep, a busy main thread, or dragging the
-      window (timers in `.default` run-loop mode are paused by live resize) makes
-      the session run long (`ContentView.swift:142-155`).
-      Store `endDate`/`remainingAtPause` and derive `timeRemaining` from the clock.
+- [x] **Countdown drifts and stalls**: it decremented a counter per tick, so system
+      sleep, a busy main thread, or dragging the window made the session run long.
+      The remaining time is now derived from an `endDate` and the timer runs in
+      `.common` run-loop mode.
 - [ ] **Timer never stops when the window closes** (no `.onDisappear`), and it
       fires one extra tick after `timeRemaining` reaches 0 before
       `timerActive = false`. Invalidate on completion and on view disappearance.
