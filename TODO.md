@@ -75,12 +75,12 @@
 ### Housekeeping
 - [x] Drop the redundant `.enableExperimentalFeature("StrictConcurrency")` in
       `Package.swift`; Swift 6 language mode already enables it.
-- [ ] Move the reference sketches (`sketch.png`, `sketch2.png`, ~1.6 MB) into a
+- [x] Move the reference sketches (`sketch.png`, `sketch2.png`, ~1.6 MB) into a
       `Docs/` folder or remove them from the repo root.
 
 ### Future Enhancements
-- [ ] Customizable session lengths
+- [x] Customizable session lengths
 - [ ] Statistics and history tracking
-- [ ] Menu bar integration
+- [x] Menu bar integration
 - [ ] Localization support
 - [x] Accessibility improvements
