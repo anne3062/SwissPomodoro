@@ -144,20 +144,13 @@ struct ContentView: View {
   private var controls: some View {
     HStack(spacing: 12) {
       Button {
-        startOrResume()
+        primaryAction()
       } label: {
-        Text(pomodoro.isPaused ? "Resume" : "Start")
+        Text(primaryTitle)
+          .frame(minWidth: 54)
       }
       .buttonStyle(CaseButtonStyle(kind: .primary))
-      .disabled(pomodoro.isRunning)
-
-      Button {
-        pomodoro.pause()
-      } label: {
-        Text("Pause")
-      }
-      .buttonStyle(CaseButtonStyle(kind: .secondary))
-      .disabled(!pomodoro.isRunning)
+      .keyboardShortcut(.space, modifiers: [])
 
       Button {
         pomodoro.reset()
@@ -165,13 +158,28 @@ struct ContentView: View {
         Text("Reset")
       }
       .buttonStyle(CaseButtonStyle(kind: .secondary))
+      .disabled(pomodoro.phase == .idle)
     }
   }
 
-  private func startOrResume() {
-    if pomodoro.isPaused {
+  private var primaryTitle: String {
+    switch pomodoro.phase {
+    case .running:
+      return "Pause"
+    case .paused:
+      return "Resume"
+    case .idle, .finished:
+      return "Start"
+    }
+  }
+
+  private func primaryAction() {
+    switch pomodoro.phase {
+    case .running:
+      pomodoro.pause()
+    case .paused:
       pomodoro.resume()
-    } else {
+    case .idle, .finished:
       showDurationSheet = true
     }
   }

@@ -53,7 +53,7 @@
       when the active toolchain is CommandLineTools only (no SwiftUI macros).
 
 ### UX / GUI (from sketch.png / sketch2.png)
-- [ ] Single primary Start/Pause button with Space as shortcut, instead of two
+- [x] Single primary Start/Pause button with Space as shortcut, instead of two
       always-visible buttons with disabled states.
 - [x] Show the digital time at all times (or on click), not only on hover – the
       current hover-only text is undiscoverable.
