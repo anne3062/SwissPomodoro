@@ -87,6 +87,11 @@ struct ContentView: View {
     }
     .padding()
     .frame(minWidth: 480, minHeight: 520)
+    .onDisappear {
+      // Closing the window must not leave the run loop retaining the timer and
+      // updating a detached state box forever.
+      stopTimer()
+    }
     .sheet(isPresented: $showDurationSheet) {
       VStack(spacing: 16) {
         Text("Set Duration")
@@ -164,9 +169,7 @@ struct ContentView: View {
 
   func updateRemaining() {
     guard let endDate else {
-      timer?.invalidate()
-      timer = nil
-      timerActive = false
+      stopTimer()
       return
     }
     let remaining = endDate.timeIntervalSinceNow
@@ -174,10 +177,7 @@ struct ContentView: View {
       timeRemaining = Int(ceil(remaining))
     } else {
       timeRemaining = 0
-      timer?.invalidate()
-      timer = nil
-      timerActive = false
-      self.endDate = nil
+      stopTimer()
     }
   }
 
@@ -185,17 +185,18 @@ struct ContentView: View {
     if let endDate {
       timeRemaining = max(0, Int(ceil(endDate.timeIntervalSinceNow)))
     }
-    timer?.invalidate()
-    timer = nil
-    endDate = nil
-    timerActive = false
+    stopTimer()
   }
 
   func resetTimer() {
+    stopTimer()
+    timeRemaining = totalTimeSeconds
+  }
+
+  func stopTimer() {
     timer?.invalidate()
     timer = nil
     endDate = nil
-    timeRemaining = totalTimeSeconds
     timerActive = false
   }
 }

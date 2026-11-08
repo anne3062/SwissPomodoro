@@ -26,9 +26,9 @@
       sleep, a busy main thread, or dragging the window made the session run long.
       The remaining time is now derived from an `endDate` and the timer runs in
       `.common` run-loop mode.
-- [ ] **Timer never stops when the window closes** (no `.onDisappear`), and it
-      fires one extra tick after `timeRemaining` reaches 0 before
-      `timerActive = false`. Invalidate on completion and on view disappearance.
+- [x] **Timer never stops when the window closes** (no `.onDisappear`), and it
+      fired one extra tick after `timeRemaining` reached 0 before flipping
+      `timerActive`. The timer now stops exactly at zero and in `.onDisappear`.
 - [ ] **Hardcoded `.black`/`.white` colors break dark mode**: the dial, ticks, and
       knob disappear in dark appearance. Use semantic colors (`Color.primary`,
       `.background`, `.quaternary`) or a fixed light "instrument" surface with an
