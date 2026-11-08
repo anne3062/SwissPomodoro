@@ -19,6 +19,14 @@ struct ContentView: View {
         Circle()
           .stroke(Color.black, lineWidth: 4)
           .frame(width: 220, height: 220)
+        // Red progress arc, drawn behind the ticks so the labels stay readable
+        if progress > 0 {
+          Circle()
+            .trim(from: 0, to: progress)
+            .stroke(Color.red, style: StrokeStyle(lineWidth: 32, lineCap: .round))
+            .rotationEffect(.degrees(-90))
+            .frame(width: 180, height: 180)
+        }
         // Tick marks
         ForEach(0..<60) { tick in
           let isMajor = tick % 5 == 0
@@ -37,12 +45,6 @@ struct ContentView: View {
             .offset(y: -86)
             .rotationEffect(.degrees(Double(hour) * 30))
         }
-        // Red progress arc
-        Circle()
-          .trim(from: 1 - progress, to: 1)
-          .stroke(Color.red, style: StrokeStyle(lineWidth: 32, lineCap: .round))
-          .rotationEffect(.degrees(-90))
-          .frame(width: 180, height: 180)
         // Central knob
         Circle()
           .fill(Color.white)

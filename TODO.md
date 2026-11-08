@@ -16,10 +16,9 @@
       Each `VStack` pins the number to the bottom of the 220pt frame while the tick
       is at the top, so "0" renders at 6 o'clock and "30" at 12 o'clock.
       Labels are now placed at an explicit radius and rotated with their tick.
-- [ ] **Progress arc grows counter-clockwise, opposite the hand** (`ContentView.swift:48-52`).
-      `trim(from: 1 - progress, to: 1)` keeps the arc anchored at 12 o'clock and
-      extends it backwards. Use `trim(from: 0, to: progress)` with the `-90°`
-      rotation so it sweeps clockwise like the hand and like the sketch.
+- [x] **Progress arc grows counter-clockwise, opposite the hand** (`ContentView.swift:48-52`).
+      The arc is now trimmed from 0 to `progress`, so it sweeps clockwise from
+      12 o'clock, and it is drawn behind the ticks/labels.
 - [ ] **Pause is destructive**: after pausing, the only Start path re-opens the
       duration sheet and restarts from the full duration (`ContentView.swift:78-116`).
       Add resume vs. new-session states (Start/Resume toggle + "New session" menu).
