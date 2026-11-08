@@ -10,10 +10,7 @@ let package = Package(
   ],
   targets: [
     .executableTarget(
-      name: "SwissPomodoro",
-      swiftSettings: [
-        .enableExperimentalFeature("StrictConcurrency")
-      ]
+      name: "SwissPomodoro"
     ),
     .testTarget(
       name: "SwissPomodoroTests",

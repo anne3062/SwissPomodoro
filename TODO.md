@@ -73,7 +73,7 @@
 - [x] Monospaced digits for the time string so the layout does not jitter.
 
 ### Housekeeping
-- [ ] Drop the redundant `.enableExperimentalFeature("StrictConcurrency")` in
+- [x] Drop the redundant `.enableExperimentalFeature("StrictConcurrency")` in
       `Package.swift`; Swift 6 language mode already enables it.
 - [ ] Move the reference sketches (`sketch.png`, `sketch2.png`, ~1.6 MB) into a
       `Docs/` folder or remove them from the repo root.
